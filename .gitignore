@@ -1,0 +1,19 @@
+# .gitignore
+
+# Arquivos Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos do Django
+db.sqlite3
+/staticfiles/
+media/
+
+# Ambiente
+.env
+
+# Node / Frontend
+node_modules/
+dist/
