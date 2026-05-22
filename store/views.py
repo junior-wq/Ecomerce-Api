@@ -177,7 +177,7 @@ class CreateCheckoutSession(APIView):
     stripe.api_key = settings.STRIPE_API_KEY
 
     def post(self, request, cart_pk):
-        domain = settings.YOUR_DOMAIN
+        # domain = settings.YOUR_DOMAIN
         try:
             cart_items_qs = CartItem.objects.filter(cart_id=cart_pk)
             serializer = CartItemSerializer(cart_items_qs, many=True, context={"request": request})

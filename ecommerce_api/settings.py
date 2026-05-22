@@ -44,7 +44,7 @@ if ENVIROMENT=='development':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -144,16 +144,6 @@ DATABASES = {
 POSTGRESS_LOCALLY=True
 if ENVIROMENT=='production' or POSTGRESS_LOCALLY:
     DATABASES['default']=dj_database_url.parse(env('DATABASE_URL'))
-
-# else :
-#      DATABASES = {
-#         'default': dj_database_url.config(
-#             default=DATABASE_URL,
-#             conn_max_age=600,
-#             conn_health_checks=True,
-#         )
-#     }
-
 
 
 
