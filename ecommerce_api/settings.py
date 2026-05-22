@@ -60,10 +60,13 @@ INSTALLED_APPS = [
     'django_filters',
     'authentication',
     'rest_framework',
+    'cloudinary',
+    'cloudinary_storage',
     'store',
     'rest_framework_simplejwt',
     'djoser',
     'customize'
+
      
 
 ]
@@ -187,8 +190,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 import os
 
-MEDIA_URL='/media/'
-MEDIA_ROOT= os.path.join(BASE_DIR,'media')
+# CLOUDINARY_URL=cloudinary://229397195231149:**********@dfk96k4dn
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_NAME'),
+    'API_KEY': env('CLOUDINARY_API_KEY'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET'),
+}
+
+if ENVIRONMENT=='production':
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    MEDIA_URL='/media/'
+    MEDIA_ROOT= os.path.join(BASE_DIR,'media')
+
+
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR/'staticfiles'
