@@ -12,6 +12,7 @@ db.sqlite3
 media/
 
 # Ambiente
+venv/
 .env
 
 # Node / Frontend

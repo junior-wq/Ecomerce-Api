@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
 import uuid
 from django.contrib.auth.models import AbstractUser
@@ -8,14 +7,35 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from decimal import Decimal
 
 
+
+
+class Category(models.Model):
+    title=models.CharField(max_length=150 ,null=False,blank=False)
+
+    def __str__(self):
+        return self.title
+    
+
 class Product(models.Model):
+
+    category = models.ForeignKey( Category,on_delete=models.SET_NULL,null=True,blank=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
     discount = models.IntegerField(
+        default=0,
         validators=[MinValueValidator(0), MaxValueValidator(100)]  # Valida se o desconto está entre 0 e 100
     )
-    stock = models.PositiveIntegerField(default=0)
+    stock = models.PositiveIntegerField(
+        default=10,
+        validators=[MinValueValidator(5), MaxValueValidator(1000)]
+    )
+
+    def clean(self):
+        if self.pk and self.images.count() < 1:
+            raise ValidationError("O produto deve ter pelo menos 1 imagem.")
+        elif self.pk and self.images.count() > 5:
+            raise ValidationError("Um produto não pode ter mais de 5 imagens.")
 
     @property
     def discounted_price(self):
@@ -25,14 +45,12 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
+
+
 class ProductImages(models.Model):
     product=models.ForeignKey(Product ,related_name='images', on_delete=models.CASCADE)
     image=models.ImageField(upload_to='product_images/')
-
-    def clean(self):
-        if self.product.images.count() >= 5:
-            raise ValidationError("Este produto já possui o número máximo de imagens (5).")
-
 
 
 class Cart(models.Model):
@@ -57,10 +75,6 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
     
-
-class User(AbstractUser):
-    email=models.EmailField(unique=True)
-
 
 class Order(models.Model):
 
@@ -102,3 +116,21 @@ class OrderItem(models.Model):
     @property
     def total_price(self):
         return self.price * self.quantity
+    
+
+
+class Reviews(models.Model):
+    stars_qty=models.PositiveIntegerField(default=0,max_length=5)
+    description=models.TextField()
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reviews")
+    order=models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews")
+
+
+
+
+class WhatsAppStats(models.Model):
+    product_name = models.CharField(max_length=255, unique=True)
+    clicks = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.product_name} - {self.clicks}"

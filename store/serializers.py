@@ -1,10 +1,23 @@
 from decimal import Decimal
 from rest_framework import serializers 
-from.models import Product,Cart,CartItem,Order,OrderItem
+from.models import Category, Product,Cart,CartItem,Order,OrderItem
 from django.conf import settings
+from rest_framework.permissions import AllowAny
+
+
+
+
+class CategorySerializer(serializers.ModelSerializer):
+   class Meta:
+      model=Category
+      fields='__all__'
+
+
 
 class ProductSerializer(serializers.ModelSerializer):
   images = serializers.SerializerMethodField()
+  permission_classes = [AllowAny]
+
   class Meta:
     model=Product
     fields=['id','images','description','price','discount','discounted_price','name','stock']
@@ -14,27 +27,34 @@ class ProductSerializer(serializers.ModelSerializer):
             .build_absolute_uri(image.image.url)\
                 for image in product.images.all()]
  
-
 class CartItemProductSerializer(serializers.ModelSerializer):
   image=serializers.SerializerMethodField()
+  
   class Meta:
     model=Product
-    fields=['id','image','name','stock']
+    fields=['id','image','name','price','stock']
   
   def get_image(self,product):
+    print(self.context)
     return self.context['request']\
       .build_absolute_uri(product.images.all()[0].image.url)
+
+
+class OrderItemProductSerializer(CartItemProductSerializer):
+  class Meta(CartItemProductSerializer.Meta):
+    fields=['id','image','name']
+
   
 class CartItemSerializer(serializers.ModelSerializer):
     product = CartItemProductSerializer()
     item_price = serializers.SerializerMethodField()
-
     class Meta:
         model = CartItem
         fields = ['id', 'product', 'quantity', 'item_price']
 
     def get_item_price(self, obj):
         return obj.quantity * obj.product.discounted_price
+    
 
 class CartItemSimpleSerializer(serializers.ModelSerializer):
     
@@ -80,11 +100,10 @@ class CartSimpleSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product_name = serializers.CharField(source="product.name", read_only=True)
-
+    product=OrderItemProductSerializer()
     class Meta:
         model = OrderItem
-        fields = ["id", "product", "product_name", "quantity", "price"]
+        fields='__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
