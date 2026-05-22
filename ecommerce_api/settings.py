@@ -66,9 +66,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'djoser',
     'customize'
-
-     
-
 ]
 
 REST_FRAMEWORK = {
@@ -146,7 +143,7 @@ DATABASES = {
 
 
 
-POSTGRESS_LOCALLY=True
+POSTGRESS_LOCALLY=False
 if ENVIRONMENT=='production' or POSTGRESS_LOCALLY:
     DATABASES['default']=dj_database_url.parse(env('DATABASE_URL'))
 
@@ -197,10 +194,11 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': env('CLOUDINARY_API_SECRET'),
 }
 
+MEDIA_URL='/media/'
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 if ENVIRONMENT=='production':
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
-    MEDIA_URL='/media/'
     MEDIA_ROOT= os.path.join(BASE_DIR,'media')
 
 
