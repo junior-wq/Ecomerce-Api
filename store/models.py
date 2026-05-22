@@ -120,7 +120,10 @@ class OrderItem(models.Model):
 
 
 class Reviews(models.Model):
-    stars_qty=models.PositiveIntegerField(default=0,max_length=5)
+    stars_qty=models.PositiveIntegerField(validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+        ])
     description=models.TextField()
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reviews")
     order=models.ForeignKey(Order, on_delete=models.CASCADE, related_name="reviews")

@@ -15,7 +15,7 @@ from pathlib import Path
 import os
 
 from environ import Env
-
+import dj_database_url
 
 env=Env()
 
@@ -128,12 +128,34 @@ WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+
+
+POSTGRESS_LOCALLY=True
+if ENVIROMENT=='production' or POSTGRESS_LOCALLY:
+    DATABASES['default']=dj_database_url.parse(env('DATABASE_URL'))
+
+# else :
+#      DATABASES = {
+#         'default': dj_database_url.config(
+#             default=DATABASE_URL,
+#             conn_max_age=600,
+#             conn_health_checks=True,
+#         )
+#     }
+
+
+
 
 
 # Password validation
