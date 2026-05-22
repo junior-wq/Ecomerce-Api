@@ -30,7 +30,7 @@ else:
     env.read_env()
 
 
-ENVIROMENT=env('ENVIROMENT', default='production')
+ENVIRONMENT=env('ENVIRONMENT', default='production')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -39,7 +39,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-if ENVIROMENT=='development':
+if ENVIRONMENT=='development':
     DEBUG = True
 else:
     DEBUG = False
@@ -104,6 +104,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 ROOT_URLCONF = 'ecommerce_api.urls'
 
 TEMPLATES = [
@@ -142,7 +145,7 @@ DATABASES = {
 
 
 POSTGRESS_LOCALLY=True
-if ENVIROMENT=='production' or POSTGRESS_LOCALLY:
+if ENVIRONMENT=='production' or POSTGRESS_LOCALLY:
     DATABASES['default']=dj_database_url.parse(env('DATABASE_URL'))
 
 
@@ -184,7 +187,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 import os
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 MEDIA_URL='/media/'
 MEDIA_ROOT= os.path.join(BASE_DIR,'media')
 
