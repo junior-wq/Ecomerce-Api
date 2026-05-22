@@ -30,6 +30,7 @@ class FooterColumn(models.Model):
 
 class FooterListItem(models.Model):
   name=models.CharField(max_length=150)
+  link=models.CharField(max_length=250,blank=True,null=True)
   footer_column=models.ForeignKey(FooterColumn,on_delete=models.CASCADE,related_name='footer_list_item')
 
   def __str__(self):
